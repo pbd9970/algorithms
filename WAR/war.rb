@@ -1,3 +1,6 @@
+require 'pry-debugger'
+
+
 # This class is complete. You do not need to alter this
 class Card
   # Rank is the rank of the card, 2-10, J, Q, K, A
@@ -18,52 +21,9 @@ class Card
     end
 end
 
-class Deck
-  attr_accessor :deck
-
-  def initialize(deck=nil)
-    @deck = deck ? deck : Array.new()
-    @discard = Array.new()
-  end
-
-  def deck
-    @deck + @discard.reverse!
-  end
-
-  def deck_size
-    @deck.size + @discard.size
-  end
-
-  # Given a card, insert it on the bottom your deck
-  def add_card(card_array)
-    card_array.each { |card| @discard << card }
-  end
-
-  # Mix around the order of the cards in your deck
-  def shuffle # You can't use .shuffle!
-    shuffled_deck = []
-    (@deck.size-1).downto(1).each do | size |
-      index = rand(size)
-      shuffled_deck << @deck[index]
-      @deck[index] = @deck[size]
-    end
-    shuffled_deck << @deck[0]
-    @deck = shuffled_deck
-
-  end
-
-  def deal_hand
-    return @deck.pop(@deck.size/2), @deck
-  end
-
-  # Remove the top card from your deck and return it
-  def deal_card
-    if @deck.size <= 1
-      @deck = @discard.reverse! + @deck
-      @discard = Array.new
-    end
-
-    @deck.pop
+class Dealer
+  def initialize
+    @deck = Array.new()
   end
 
   # Reset this deck with 52 cards
@@ -78,6 +38,47 @@ class Deck
     end
     @deck = new_deck
   end
+
+  # Mix around the order of the cards in your deck
+  def shuffle # You can't use .shuffle!
+    shuffled_deck = []
+    (@deck.size-1).downto(1).each do | size |
+      index = rand(size)
+      shuffled_deck << @deck[index]
+      @deck[index] = @deck[size]
+    end
+    shuffled_deck << @deck[0]
+    @deck = shuffled_deck
+  end
+
+  def deal_hand
+    return @deck.pop(@deck.size/2), @deck
+  end
+end
+
+class Deck
+  attr_reader :deck
+
+  def initialize(deck)
+    @deck = {0 => "placeholder"}
+    @next_card      = 0
+    @next_play_card = 0
+    add_card(deck)
+  end
+
+  def deck_size
+    @deck.size
+  end
+
+  # Given a card, insert it on the bottom your deck
+  def add_card(card_array)
+    card_array.each {|card| @deck[@next_card += 1] = card }
+  end
+
+  # Remove the top card from your deck and return it
+  def deal_card
+    @deck.delete(@next_play_card += 1)
+  end
 end
 
 class Card
@@ -89,11 +90,10 @@ class Player
 
   def initialize(name)
     @name = name
-    @hand = Deck.new
   end
 
   def hand=(hand)
-    @hand.deck = hand
+    @hand = Deck.new(hand)
   end
 
 end
@@ -101,7 +101,7 @@ end
 
 class War
   def initialize(player1, player2)
-    @deck = Deck.new
+    @dealer  = Dealer.new
     @player1 = Player.new(player1)
     @player2 = Player.new(player2)
     
@@ -118,14 +118,14 @@ class War
     run_game.times do
       counter = 0
       # You will need to shuffle and pass out the cards to each player
-      @deck.create_52_card_deck()
-      @deck.shuffle()
+      @dealer.create_52_card_deck()
+      @dealer.shuffle()
 
-      @player1.hand, @player2.hand = @deck.deal_hand()
+      @player1.hand, @player2.hand = @dealer.deal_hand()
       
       while true
         counter += 1
-        #print counter, "  --  P1: ", @player1.hand.deck_size, " P2: ", @player2.hand.deck_size, "\n"
+        print counter, "  --  P1: ", @player1.hand.deck_size, " P2: ", @player2.hand.deck_size, "\n"
         if @player1.hand.deck_size == 0 || @player2.hand.deck_size == 0
           if @player1.hand.deck_size == 0
             score[1] += 1
@@ -134,7 +134,10 @@ class War
           end
           break
         end
-        return_hand = WarAPI.play_turn(@player1.name, @player1.hand.deal_card, @player2.name, @player2.hand.deal_card)
+        return_hand = WarAPI.play_turn(@player1, @player1.hand.deal_card, @player2, @player2.hand.deal_card)
+        #return_hand = WarAPI.play_turn(@player1.name, @player1.hand.deal_card, @player2.name, @player2.hand.deal_card)
+        #binding.pry unless return_hand[@player1.name]
+        #binding.pry unless return_hand[@player2.name]
         @player1.hand.add_card(return_hand[@player1.name])
         @player2.hand.add_card(return_hand[@player2.name])
       end
@@ -160,8 +163,8 @@ class WarAPI
   # This method will take a card from each player and
   # return a hash with the cards that each player should receive
   def self.play_turn(player1, card1, player2, card2)
-    binding.pry unless card2
     binding.pry unless card1
+    binding.pry unless card2
     if card1.value > card2.value
       {player1 => [card1, card2], player2 => []}
     elsif card2.value > card1.value || rand(100).even?

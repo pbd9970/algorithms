@@ -19,31 +19,30 @@ describe 'Card' do
   end
 end
 
-describe 'Deck' do
+describe 'Dealer' do
   it 'exists' do
-    expect(Deck).to be_a(Class)
+    expect(Dealer).to be_a(Class)
   end
   describe '.initialize' do
 
-    it 'starts as an empty deck' do
-      deck = Deck.new()
+    xit 'starts as an empty deck' do
+      deck = Dealer.new()
       
       expect(deck.deck).to eq([])
     end
 
-    it 'can take a deck' do
-      deck = Deck.new
+    xit 'can take a deck' do
+      deck = Dealer.new
       deck.create_52_card_deck
-      new_deck = Deck.new
-      new_deck.deck = deck.deck
+      new_deck = Deck.new(deck)
 
       expect(new_deck.deck).to eq(deck.deck)
     end
   end
 
   describe '.create_52_card_deck' do
-    it 'can initialize a 52 card deck' do
-      deck = Deck.new
+    xit 'can initialize a 52 card deck' do
+      deck = Dealer.new
       deck.create_52_card_deck
 
       expect(deck.deck.size).to eq(52)
@@ -52,10 +51,10 @@ describe 'Deck' do
   end
 
   describe '.shuffle' do
-    it 'can shuffle the cards' do
-      deck = Deck.new
+    xit 'can shuffle the cards' do
+      deck = Dealer.new
       deck.create_52_card_deck
-      deck2 = Deck.new
+      deck2 = Dealer.new
       deck2.create_52_card_deck
 
       expect(deck.deck.map{|d| d.detail}).to eq(deck2.deck.map{|d| d.detail})
@@ -70,8 +69,8 @@ describe 'Deck' do
   end
 
   describe '.deal_hand' do
-    it 'can deal two hands of 26 different cards' do
-      deck = Deck.new
+    xit 'can deal two hands of 26 different cards' do
+      deck = Dealer.new
       deck.create_52_card_deck
       deck.shuffle
 
@@ -86,7 +85,7 @@ describe 'Deck' do
     end
   
     describe '.deal_card' do
-      it "can deal a card" do
+      xit "can deal a card" do
         deck = Deck.new
         deck.create_52_card_deck
 
@@ -96,7 +95,7 @@ describe 'Deck' do
 
       end
 
-      it "will remove card from deck" do
+      xit "will remove card from deck" do
         deck = Deck.new
         deck.create_52_card_deck
 
@@ -107,7 +106,7 @@ describe 'Deck' do
     end
 
     describe '.add_card' do
-      it 'will add a card to the deck' do
+      xit 'will add a card to the deck' do
         deck = Deck.new
         deck.add_card([Card.new(7,"Clubs"), Card.new(8,"Diamonds")])
         
@@ -132,7 +131,7 @@ describe 'Player' do
 
   describe '.hand=' do
     it 'can get a hand dealt' do
-      deck = Deck.new
+      deck = Dealer.new
       deck.create_52_card_deck
       deck.shuffle
       hand1, hand2 = deck.deal_hand
@@ -140,8 +139,10 @@ describe 'Player' do
       player2 = Player.new("Erwin Rommel")
 
       player2.hand = hand2
+      
+      puts player2.hand.deal_card
 
-      expect(player2.hand.deck).to eq(hand2)
+      expect(player2.hand.deck.values).to eq(hand2)
     end
   end
 end
