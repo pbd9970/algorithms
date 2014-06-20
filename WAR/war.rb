@@ -60,29 +60,45 @@ class Dealer
 end
 
 class Deck
+  require_relative '../linked_list/linked_list.rb'
   attr_reader :deck
 
   def initialize(deck)
-    @deck = {}
-    @next_card      = 0
-    @next_play_card = 0
-    add_card(deck)
-    puts deck
+    @deck = Linklist.new(deck)
   end
 
-  def deck_size
-    @deck.size
-  end
-
-  # Given a card, insert it on the bottom your deck
   def add_card(card_array)
-    card_array.each {|card| @deck[@next_card += 1] = card }
+    card_array.each { |x| @deck.push(x) }
   end
 
-  # Remove the top card from your deck and return it
   def deal_card
-    @deck.delete(@next_play_card += 1)
+    @deck.shift
   end
+
+
+# attr_reader :deck
+
+# def initialize(deck)
+#   @deck = {}
+#   @next_card      = 0
+#   @next_play_card = 0
+#   add_card(deck)
+#   puts deck
+# end
+
+# def deck_size
+#   @deck.size
+# end
+
+# # Given a card, insert it on the bottom your deck
+# def add_card(card_array)
+#   card_array.each {|card| @deck[@next_card += 1] = card }
+# end
+
+# # Remove the top card from your deck and return it
+# def deal_card
+#   @deck.delete(@next_play_card += 1)
+# end
 end
 
 class Card
