@@ -22,6 +22,9 @@ class Card
 end
 
 class Dealer
+
+  attr_reader :deck
+
   def initialize
     @deck = Array.new()
   end
@@ -60,10 +63,11 @@ class Deck
   attr_reader :deck
 
   def initialize(deck)
-    @deck = {0 => "placeholder"}
+    @deck = {}
     @next_card      = 0
     @next_play_card = 0
     add_card(deck)
+    puts deck
   end
 
   def deck_size

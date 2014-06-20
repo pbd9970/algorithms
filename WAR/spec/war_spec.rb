@@ -25,23 +25,14 @@ describe 'Dealer' do
   end
   describe '.initialize' do
 
-    xit 'starts as an empty deck' do
+    it 'starts as an empty deck' do
       deck = Dealer.new()
       
       expect(deck.deck).to eq([])
     end
 
-    xit 'can take a deck' do
-      deck = Dealer.new
-      deck.create_52_card_deck
-      new_deck = Deck.new(deck)
-
-      expect(new_deck.deck).to eq(deck.deck)
-    end
-  end
-
   describe '.create_52_card_deck' do
-    xit 'can initialize a 52 card deck' do
+    it 'can initialize a 52 card deck' do
       deck = Dealer.new
       deck.create_52_card_deck
 
@@ -51,7 +42,7 @@ describe 'Dealer' do
   end
 
   describe '.shuffle' do
-    xit 'can shuffle the cards' do
+    it 'can shuffle the cards' do
       deck = Dealer.new
       deck.create_52_card_deck
       deck2 = Dealer.new
@@ -69,7 +60,7 @@ describe 'Dealer' do
   end
 
   describe '.deal_hand' do
-    xit 'can deal two hands of 26 different cards' do
+    it 'can deal two hands of 26 different cards' do
       deck = Dealer.new
       deck.create_52_card_deck
       deck.shuffle
@@ -83,21 +74,41 @@ describe 'Dealer' do
         expect(array2.find{|card2| card == card2 }).to eq(nil)
       end
     end
+  end
+end
+
   
+describe 'Deck' do
+  describe '.initialize' do
+
+    it 'can take a deck' do
+      dealer = Dealer.new
+      dealer.create_52_card_deck
+      deck = Deck.new(dealer.deck)
+
+      expect(dealer.deck).to eq(deck.deck.values)
+    end
+  end
+
+
     describe '.deal_card' do
-      xit "can deal a card" do
-        deck = Deck.new
-        deck.create_52_card_deck
+      it "can deal a card" do
+        dealer = Dealer.new()
+        dealer.create_52_card_deck
+        dealer_deck = dealer.deck
+        deck = Deck.new(dealer_deck)
 
         card = deck.deal_card
 
-        expect(card.detail).to eq("Ace of Spades")
+        expect(card.detail).to eq("2 of Hearts")
 
       end
 
-      xit "will remove card from deck" do
-        deck = Deck.new
-        deck.create_52_card_deck
+      it "will remove card from deck" do
+        dealer = Dealer.new()
+        dealer.create_52_card_deck
+        dealer_deck = dealer.deck
+        deck = Deck.new(dealer_deck)
 
         card = deck.deal_card
 
@@ -106,8 +117,9 @@ describe 'Dealer' do
     end
 
     describe '.add_card' do
-      xit 'will add a card to the deck' do
-        deck = Deck.new
+      it 'will add a card to the deck' do
+        deck = Deck.new([])
+
         deck.add_card([Card.new(7,"Clubs"), Card.new(8,"Diamonds")])
         
         expect(deck.deck.size).to eq(2)
@@ -140,8 +152,6 @@ describe 'Player' do
 
       player2.hand = hand2
       
-      puts player2.hand.deal_card
-
       expect(player2.hand.deck.values).to eq(hand2)
     end
   end
@@ -164,7 +174,7 @@ describe 'War' do
     it 'plays a game of war' do
       game = War.new("Patton", "Rommel")
 
-      game.play_game
+      game.play_game(1)
     end
   end
 end
