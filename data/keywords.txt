@@ -1,0 +1,7 @@
+religion = {:words: ["holy", "scripture", "prayer"], :regex: []}
+
+astronomy = {:words: ["planets", "telescope"], :regex: ["astronom", "orbit"]}
+
+philosophy = {:words: [], :regex: ["philosoph"]}
+
+archaeology = {:words: [], :regex: ["archeolog", "antiqu"]}

@@ -95,7 +95,8 @@ class Predictor
       ic = Iconv.new('UTF-8', 'UTF-8//IGNORE')
       string = ic.iconv(string)
     end
-    string.split(/\W+/).map(&:downcase) # Split by non-words
+    string = string.split(/\W+/).map(&:downcase) # Split by non-words
+    string.select { |token| good_token? token }
   end
 
   # Internal: Load books from files.
