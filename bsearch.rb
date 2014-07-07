@@ -1,20 +1,25 @@
 require 'rubygems'
 require 'pry-debugger'
+
 module ArrayUtil
   def self.bsearch(array, element)
-    # If the array is empty return a result
-    # Otherwise call your helper _bsearch method
+    return false if array.empty?
+    array = array.sort
+    _bsearch(array, element)
   end
 
-  def self._bsearch(array, element, start_index, end_index)
-    # If the start and end indeces are the same, search
-    # that element and return
-    #
-    # Otherwise, find the midpoint
-    #   midpoint = start_index + (end_index - start_index) / 2
-    #
-    # If the element is greater than the one at midpoint, call
-    #   _bsearch on the right half of the remaining array
-    # Otherwise, call _bsearch on left half of the remaining array
+  def self._bsearch(array, element)
+    start_index = array.length / 2
+    
+    return true if array[start_index] == element
+    return false if array.length <= 1
+
+    if element < array[start_index]
+      _bsearch(array.slice(0..start_index-1), element)
+    elsif element > array[start_index]
+      _bsearch(array.slice(start_index+1..-1), element)
+    else
+      raise TypeError, "No implicit conversion of #{array[start_index]} to number"
+    end
   end
 end
